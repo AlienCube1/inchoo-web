@@ -106,15 +106,15 @@ while($row = $stmt->fetch()){
 // echo 'Post deleted';
 
 // SEARCH DATA
-$search = '%Marcel%';
-$sql = 'SELECT * FROM user WHERE password LIKE ?';
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$search]);
-$posts = $stmt->fetchAll();
+// $search = '%Marcel%';
+// $sql = 'SELECT * FROM user WHERE password LIKE ?';
+// $stmt = $pdo->prepare($sql);
+// $stmt->execute([$search]);
+// $posts = $stmt->fetchAll();
 
-foreach($posts as $post){
-	echo $post->username . "<br>";
-}
+// foreach($posts as $post){
+// 	echo $post->username . "<br>";
+// }
 
 
 

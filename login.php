@@ -7,6 +7,9 @@ $pw = "Marcel123";
 $dbname = 'user';
 $uname = $_POST['usrnm'];
 $psw = $_POST['psw'];
+$hashpsw = md5($psw);
+
+
 // SET DSN
 $dsn = 'mysql:host='. $host .';dbname='. $dbname;
 // Create a PDO instance
@@ -18,7 +21,7 @@ $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 // searching
 $sql = 'SELECT username,password FROM user WHERE username = :uname && password = :psw';
 $stmt = $pdo->prepare($sql);
-$stmt->execute(['uname' => $uname, 'psw'=> $psw]);
+$stmt->execute(['uname' => $uname, 'psw'=> $hashpsw]);
 $post = $stmt->fetch();
 //if the login info is correct create a session and set cookies if choosen so.
 if($post){

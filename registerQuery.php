@@ -10,7 +10,7 @@ $password = $_POST["password"];
 $repeate =  $_POST["repeatPassword"];
 $mail = $_POST["mail"];
 $code = rand();
-
+$hashed = md5($password);
 // SET DSN --> I'm not sure how this works, have to check in.
 $dsn = 'mysql:host='. $host .';dbname='. $dbname;
 
@@ -23,7 +23,7 @@ if($password == $repeate) {
 	if(strlen($password) > 7) {
 	$sql = 'INSERT INTO user(username, password, mail, code) VALUES (:username, :password, :mail,:code)';
 	$stmt = $pdo->prepare($sql);
-	$stmt->execute(['username' => $username, 'password' => $password, 'mail' => $mail, 'code' => $code]);
+	$stmt->execute(['username' => $username, 'password' => $hashed, 'mail' => $mail, 'code' => $code]);
 	header("location: main.php");
 }
 	else{

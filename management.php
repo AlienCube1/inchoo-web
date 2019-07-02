@@ -21,19 +21,12 @@ $dsn = 'mysql:host='. $host .';dbname='. $dbname;
 
 $pdo = new PDO($dsn, $name, $pw);
 $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
-/*
-$get_pics = "SELECT image FROM picture";
-$query = $pdo->prepare($get_pics);
-$query->execute();
 
-echo "<img src=" . $query . ">";
-*/
-//// Query for getting username and mail to echo ti
-$get_user_info = 'SELECT username, mail FROM user WHERE username=:uname';
-$get_user_query = $pdo->prepare($get_user_info);
-$get_user_query->execute(['uname' => $username]);
-$post = $get_user_query->fetch();
-
+//// Just a random query to get picid 
+// $id_of_pic = $pdo->query('SELECT user_id FROM picture');
+// while($out = $id_of_pic->fetch(PDO::FETCH_ASSOC)){
+// 	$pic_id = $out['user_id'];
+// }
 
 //// Query for getting id from username so I can compare it to the id of pictures poster
 $get_user_id = 'SELECT id FROM user WHERE username=:usname';
@@ -47,39 +40,45 @@ foreach($idPost as $rowid){
 
 $stmt = $pdo->query('SELECT picid,image,user_id FROM picture');
 
-//// Get name and email of user who posted the picture
-
-
-
+//// The while loop and its nested foreach is used to display picture and relevant info alongside remove button
 
 while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
 	$id = $row['picid'];
 	$imagedata = $row['image'];
 	$pic_user_id = $row['user_id'];
-	#header('Content-type: image/png');
-	#echo $imagedata;
 	echo "<div>";
 	echo '<img border="5"src="data:image/png;base64,' .  base64_encode(stripslashes($imagedata))  . '" />';
 	$_SESSION["picid"] = $id;
-	$sqlInfo = 'SELECT username, mail FROM user WHERE id = :id';
-	$Infostmt = $pdo->prepare($sqlInfo);
-    $Infostmt->execute(['id' => $id]);
-	$InfostmtPost = $Infostmt->fetchAll();
+
+	//// Get id of the picture
+
+	$get_pics_desc = "SELECT user_id FROM picture WHERE picid=:picid";
+	$get_pic_descQuery = $pdo->prepare($get_pics_desc);
+	$get_pic_descQuery->execute(['picid' => $id]);
+	$descPost = $get_pic_descQuery->fetch(PDO::FETCH_ASSOC);
+	
+	//// Get username and email of user who posted that picture
+
+	$get_user_info = 'SELECT username, mail FROM user WHERE id=:id';
+	$get_user_query = $pdo->prepare($get_user_info);
+	$get_user_query->execute(['id' => $descPost['user_id']]);
+	$post = $get_user_query->fetch();
 	
 	?>
 	<form action='remove.php' method="post">
+		<!-- Check if current user is the one who uploaded the picture he sees, if he is let him delete it -->
 	<?php if($pic_user_id == $idPost) {
 	echo "<input type='submit' value='remove'>";
 	?>
-	<?php	} foreach($InfostmtPost as $rows) {
-		echo "info" . $rows . "<br>";
+	<?php	} foreach($post as $rows) {
+		echo $rows . "<br>";
 		} ?>
 	</form>
 	<?php   
  	echo "</div>";
 	}
 	
-	#echo $imagedata;
+	
 
  
 
